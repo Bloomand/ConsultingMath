@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import React, { useState } from 'react';
 import Game from './Game.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getUserInfo } from '../../src/firebaseApi/userActions.js';
 
 const RankedGame = ({ navigation, route }) => {
     const [timerCount, setTimer] = useState();
@@ -12,6 +13,25 @@ const RankedGame = ({ navigation, route }) => {
     const [nonElem, setNon] = useState();
 
     const [viewTimer, setViewTimer] = useState("0:00");
+
+    const [userInfo, setUserInfo] = useState({
+        total: 0,
+        right: 0,
+        wrong: 0,
+        seconds: 0,
+    });
+
+    const getUserInfo = useCallback(async () => {
+        try {
+            const userId = await AsyncStorage.getItem("user-id");
+            const { data } = await getUserInfo(userId);
+
+            setUserInfo(data);
+        } catch (error) {
+            console.log("Error", error);
+        }
+    }, []);
+
 
     useEffect(() => {
         let min = Math.floor(timerCount / 60);
